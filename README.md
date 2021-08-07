@@ -70,7 +70,11 @@ npm install googleapis ts-node typescript yargs @types/yargs @types/node
 npx tsc --init
 ```
 
-Then we'll create a file called `google-api-auth.ts`:
+We've added a number of dependencies that will allow us to write a TypeScript Node command line application. We've also added a dependency to the [`googleapis`](https://www.npmjs.com/package/googleapis) package which describes itself as:
+
+> Node.js client library for using Google APIs. Support for authorization and authentication with OAuth 2.0, API Keys and JWT tokens is included.
+
+We're going to make use of the OAuth 2.0 part. We'll start our journey by creating a file called `google-api-auth.ts`:
 
 ```ts
 import { getArgs, makeOAuth2Client } from "./shared";
