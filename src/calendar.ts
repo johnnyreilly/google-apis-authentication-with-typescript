@@ -13,4 +13,18 @@ async function makeCalendarClient() {
   return calendarClient;
 }
 
-// getToken();
+
+async function getCalendar() {
+  const calendarClient = await makeCalendarClient();
+
+  const { data: calendars, status } = await calendarClient.calendarList.list();
+
+  if (status === 200) {
+    console.log('calendars', calendars);
+  } else {
+    console.log('there was an issue...', status);
+  }
+
+}
+
+getCalendar();

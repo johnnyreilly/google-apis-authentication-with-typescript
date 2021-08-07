@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "calendar": "ts-node calendar.ts",
     "google-api-auth": "ts-node google-api-auth.ts"
   },
   "keywords": [],

@@ -176,11 +176,71 @@ Then (quickly) paste the acquired code into the following command:
 
 The `refresh_token` (alongside much else) will be printed to the console. Grab it and put it somewhere secure. Again, no storing in source control!
 
+It's worth taking a moment to reflect on this.  We've acquired a refresh token which involved a certain amount of human interaction.  We've had to run a console command, do some work in a browser and run another commmand. You wouldn't want to do this repeatedly because it involves human interaction. Intentionally it cannot be automated. However, once you've acquired the refresh token, you can use it repeatedly until it expires (which may be never or at least years in the future). So once you have the refresh token, and you've stored it securely, you have what you need to be able to automate an API interaction with an API.
+
 ## Accessing the Google Calendar API
 
-Finally we're ready to start accessing the Google Calendar API. We'll create a `calendar.ts` file
+Let's test out our refresh token by attempting to access the Google Calendar API. We'll create a `calendar.ts` file
+
+```ts
+import { google } from "googleapis";
+import { getArgs, makeOAuth2Client } from "./shared";
+
+async function makeCalendarClient() {
+  const { clientId, clientSecret, refreshToken } = await getArgs();
+  const oauth2Client = makeOAuth2Client({ clientId, clientSecret });
+  oauth2Client.credentials.refresh_token = refreshToken;
+
+  const calendarClient = google.calendar({
+    version: "v3",
+    auth: oauth2Client,
+  });
+  return calendarClient;
+}
 
 
+async function getCalendar() {
+  const calendarClient = await makeCalendarClient();
 
+  const { data: calendars, status } = await calendarClient.calendarList.list();
 
+  if (status === 200) {
+    console.log('calendars', calendars);
+  } else {
+    console.log('there was an issue...', status);
+  }
 
+}
+
+getCalendar();
+```
+
+The `getCalendar` function above uses the `client_id`, `client_secret` and `refresh_token` to access the Google Calendar API and retrieve the list of calendars.
+
+We'll add an entry to our `package.json` which will allow us to run this function:
+
+```json
+    "calendar": "ts-node calendar.ts",
+```
+
+Now we're ready to acquire the refresh token.  We'll run the following command (substituting in the appropriate values):
+
+`npm run calendar -- --clientId CLIENT_ID --clientSecret CLIENT_SECRET --refreshToken REFRESH_TOKEN`
+
+When you run for the first time, you may encounter a self explanatory message which tells you that you need enable the calendar API for your application:
+
+```
+(node:31563) UnhandledPromiseRejectionWarning: Error: Google Calendar API has not been used in project 77777777777777 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/calendar-json.googleapis.com/overview?project=77777777777777 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+```
+
+Follow the instructions if you encounter this. When you run successfully for the first time you should see something like this showing up in the console:
+
+![Screenshot of calendars list response in the console](images/calendars-response.png)
+
+This demostrates that we're successfully integrating with a Google API using our refresh token.
+
+## Today the Google Calendar API, tomorrow the (Google API) world!
+
+What we've demonstrated here is integrating with the Google Calendar API.  However, that is not the limit of what you can do. As we discussed earlier, Google has more than two hundred APIs you can interact with, and the key to that interaction is following the same steps for authentication that this post outlines.
+
+Let's imagine that you want 
