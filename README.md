@@ -1,6 +1,6 @@
 # Google APIs: authenticating with TypeScript
 
-Google has a [wealth of APIs](https://developers.google.com/apis-explorer) which we can interact with.  At the time of writing, there's more than two hundred available, including YouTube, Google Calendar and GMail alongside many others. To integrate with these APIs, it's necessary to authenticate and then use that credential with the API. This post will take you through how to do just that using TypeScript.
+Google has a [wealth of APIs](https://developers.google.com/apis-explorer) which we can interact with.  At the time of writing, there's more than two hundred available; including YouTube, Google Calendar and GMail (alongside many others). To integrate with these APIs, it's necessary to authenticate and then use that credential with the API. This post will take you through how to do just that using TypeScript. It will also demonstrate how to use one of those APIs: the Google Calendar API.
 
 ## Creating an OAuth 2.0 Client ID on the Google Cloud Platform
 
@@ -237,10 +237,12 @@ Follow the instructions if you encounter this. When you run successfully for the
 
 ![Screenshot of calendars list response in the console](images/calendars-response.png)
 
-This demostrates that we're successfully integrating with a Google API using our refresh token.
+This demonstrates that we're successfully integrating with a Google API using our refresh token.
 
 ## Today the Google Calendar API, tomorrow the (Google API) world!
 
-What we've demonstrated here is integrating with the Google Calendar API.  However, that is not the limit of what you can do. As we discussed earlier, Google has more than two hundred APIs you can interact with, and the key to that interaction is following the same steps for authentication that this post outlines.
+What we've demonstrated here is integrating with the Google Calendar API.  However, that is not the limit of what we can do. As we discussed earlier, Google has more than two hundred APIs we can interact with, and the key to that interaction is following the same steps for authentication that this post outlines.
 
-Let's imagine that you want 
+Let's imagine that we want to integrate with the YouTube API or the GMail API. We'd be able to follow the steps in this post, using different [scopes for the refresh token appropriate to the API](https://developers.google.com/identity/protocols/oauth2/scopes#calendar), and build an integration against that API.
+
+The approach this post outlines is the key to integrating with a multitude of Google APIs.
