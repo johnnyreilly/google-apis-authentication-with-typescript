@@ -50,17 +50,17 @@ When you download it, it should look something like this:
 }
 ```
 
-You'll need the `client_id`, `client_secret` and `redirect_uris` - but keep them in a safe place and don't commit them to source control!
+You'll need the `client_id`, `client_secret` and `redirect_uris` - but keep them in a safe place and don't commit `client_id` and `client_secret` to source control!
 
 ## Acquiring a refresh token
 
-Now we've got our credentials, we're ready to write a simple node command line application which we can use to obtain a refresh token. This is actually a multi-stage process that will end up looking like this:
+Now we've got our `client_id` and `client_secret`, we're ready to write a simple node command line application which we can use to obtain a refresh token. This is actually a multi-stage process that will end up looking like this:
 
-- Provide the Google authentication provider with the `client_id`, `client_secret`, in exchange it will provide an authentication URL.
+- Provide the Google authentication provider with the `client_id` and `client_secret`, in return it will provide an authentication URL.
 - Open the authentication URL in the browser and grant consent, the provider will hand over a code.
-- Provide the Google authentication provider with the `client_id`, `client_secret` and the code, in exchange this will provide a refresh token.
+- Provide the Google authentication provider with the `client_id`, `client_secret` and the code, it will acquire and provide users with a refresh token.
 
-Let's start coding. We'll initialise a TypeScript node project like so:
+Let's start coding. We'll initialise a TypeScript Node project like so:
 
 ```bash
 mkdir src
@@ -107,7 +107,7 @@ async function getToken() {
 getToken();
 ```
 
-And a common file named `shared.ts` which we'll re-use later:
+And a common file named `shared.ts` which `google-api-auth.ts` imports and which we'll re-use later:
 
 ```ts
 import { google } from "googleapis";
@@ -153,8 +153,8 @@ export function makeOAuth2Client({
 
 The `getToken` function above does these things:
 
-1. If given a `client_id` and `client_secret` will obtain an authentication URL.
-2. If given a `client_id`, `client_secret` and `code` will obtain a refresh token (scoped to access the Google Calendar API).
+1. If given a `client_id` and `client_secret` it will obtain an authentication URL.
+2. If given a `client_id`, `client_secret` and `code` it will obtain a refresh token (scoped to access the Google Calendar API).
 
 We'll add an entry to our `package.json` which will allow us to run our console app:
 
@@ -180,7 +180,7 @@ Then (quickly) paste the acquired code into the following command:
 
 The `refresh_token` (alongside much else) will be printed to the console. Grab it and put it somewhere secure. Again, no storing in source control!
 
-It's worth taking a moment to reflect on this.  We've acquired a refresh token which involved a certain amount of human interaction.  We've had to run a console command, do some work in a browser and run another commmand. You wouldn't want to do this repeatedly because it involves human interaction. Intentionally it cannot be automated. However, once you've acquired the refresh token, you can use it repeatedly until it expires (which may be never or at least years in the future). So once you have the refresh token, and you've stored it securely, you have what you need to be able to automate an API interaction with an API.
+It's worth taking a moment to reflect on what we've done.  We've acquired a refresh token which involved a certain amount of human interaction.  We've had to run a console command, do some work in a browser and run another commmand. You wouldn't want to do this repeatedly because it involves human interaction. Intentionally it cannot be automated. However, once you've acquired the refresh token, you can use it repeatedly until it expires (which may be never or at least years in the future). So once you have the refresh token, and you've stored it securely, you have what you need to be able to automate an API interaction.
 
 ## Accessing the Google Calendar API
 
@@ -229,17 +229,17 @@ We'll add an entry to our `package.json` which will allow us to run this functio
     "calendar": "ts-node calendar.ts",
 ```
 
-Now we're ready to acquire the refresh token.  We'll run the following command (substituting in the appropriate values):
+Now we're ready to test `calendar.ts`.  We'll run the following command (substituting in the appropriate values):
 
 `npm run calendar -- --clientId CLIENT_ID --clientSecret CLIENT_SECRET --refreshToken REFRESH_TOKEN`
 
-When you run for the first time, you may encounter a self explanatory message which tells you that you need enable the calendar API for your application:
+When we run for the first time, we may encounter a self explanatory message which tells us that we need enable the calendar API for our application:
 
 ```
 (node:31563) UnhandledPromiseRejectionWarning: Error: Google Calendar API has not been used in project 77777777777777 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/calendar-json.googleapis.com/overview?project=77777777777777 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
 ```
 
-Follow the instructions if you encounter this. When you run successfully for the first time you should see something like this showing up in the console:
+Once enabled, we can run successfully for the first time. Consequently we should see something like this showing up in the console:
 
 ![Screenshot of calendars list response in the console](images/calendars-response.png)
 
@@ -251,4 +251,4 @@ What we've demonstrated here is integrating with the Google Calendar API.  Howev
 
 Let's imagine that we want to integrate with the YouTube API or the GMail API. We'd be able to follow the steps in this post, using different [scopes for the refresh token appropriate to the API](https://developers.google.com/identity/protocols/oauth2/scopes#calendar), and build an integration against that API.
 
-The approach this post outlines is the key to integrating with a multitude of Google APIs.
+The approach outlined by this post is the key to integrating with a multitude of Google APIs. Happy integrating!
